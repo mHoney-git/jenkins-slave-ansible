@@ -1,25 +1,38 @@
 ---
       - name: Install Openjdk
         yum:
-          name: java-1.8.0-openjdk
-          state: latest
+          name: "{{java.VERSION}}"
+          state: present
         become: true
+
+      - name: Correct alternatives to change default java version
+        alternatives: 
+          name: java
+          link: /bin/java
+          path: "{{java.ALTERNATIVES}}"
 
       - name: Download Jenkins.repo
         get_url: 
-          url: https://pkg.jenkins.io/redhat-stable/jenkins.repo
+          url: "{{jenkins.repo_URL}}"
           dest: /etc/yum.repos.d/jenkins.repo
         become: true
 
       - name: Import Jenkins Key
         rpm_key: 
           state: present
-          key: https://pkg.jenkins.io/redhat-stable/jenkins.io.key
+          key: "{{jenkins.gpg_key}}"
 
       - name: Install Jenkins
         yum:
           name: jenkins
           state: present
+
+      - name: change jenkins java options
+        lineinfile:
+          dest=/etc/sysconfig/jenkins
+          regexp=^JENKINS_JAVA_OPTIONS=
+          line=JENKINS_JAVA_OPTIONS="{{jenkins.JAVA_OPTIONS}}"
+        become: true
 
       - name: Start Jenkins
         service:
