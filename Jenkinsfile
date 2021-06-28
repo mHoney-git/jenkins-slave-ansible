@@ -1,3 +1,3 @@
 @Library("jenkins-prod-shared-library") _
 
-jenkinsinstall(jenkinshosts:"hosts.inv", jenkinsyml:"site.yml")
+jenkinsinstall(jenkinshosts:"hosts.inv", jenkinsyml:"jenkinscode.yml")
